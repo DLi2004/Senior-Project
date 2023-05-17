@@ -26,7 +26,7 @@ public class DriveTrain {
         this.backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         this.frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         this.backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-
+        
         this.frontLeftDrive.setPower(0);
         this.frontRightDrive.setPower(0);
         this.backLeftDrive.setPower(0);
