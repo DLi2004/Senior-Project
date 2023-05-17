@@ -30,53 +30,6 @@ public class Teleop extends LinearOpMode {
             double strafe = 0;
 
             this.driveTrain.drivePower(twist, forward, strafe);
-
-            /*
-             * Gripper controls. Mapping:
-             * - Right bumper: Toggle open and close
-             */
-
-            if (gamepad1.right_bumper) {
-                gripper.toggle();
-            }
-
-            /* 
-             * Wrist rotation. Mapping:
-             * - Dpad right: Rotate front
-             * - Dpad left: Rotate back
-             */ 
-
-            if (gamepad1.dpad_right) {
-                wrist.rotateFront();
-            }
-            else if (gamepad1.dpad_left) {
-                wrist.rotateBack();
-            }
-
-            /*
-             * Lift controls. Mapping:
-             * - A: Ground 
-             * - X: Low
-             * - Y: Mid
-             * - B: High
-             * - Left bumper: Reset
-             */
-            
-            if (gamepad1.a) {
-                lift.move(Lift.GROUND);
-            }
-            else if (gamepad1.x) {
-                lift.move(Lift.LOW);
-            }
-            else if (gamepad1.y) {
-                lift.move(Lift.MID);
-            }
-            else if (gamepad1.b) {
-                lift.move(Lift.HIGH);
-            }
-            else if (gamepad1.left_bumper) {
-                lift.move(Lift.RESET);
-            }
         }
 
         // Display Info
