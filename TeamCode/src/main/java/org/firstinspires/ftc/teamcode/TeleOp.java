@@ -1,5 +1,5 @@
 /*
- * FTC Team 22281 - SLAM MMDs 2022-2023 TeleOp
+ * Adapted from FTC Team 22281 - SLAM MMDs 2022-2023 TeleOp
  */
 
 package org.firstinspires.ftc.teamcode;
