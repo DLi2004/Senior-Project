@@ -36,8 +36,8 @@ public class MainOpMode extends LinearOpMode {
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
          **/
-        if (objectDetector.tfod != null) {
-            objectDetector.tfod.activate();
+        if (objectDetector.getTfod() != null) {
+            objectDetector.getTfod().activate();
 
             // The TensorFlow software will scale the input images from the camera to a lower resolution.
             // This can result in lower detection accuracy at longer distances (> 55cm or 22").
@@ -45,7 +45,7 @@ public class MainOpMode extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            objectDetector.tfod.setZoom(2.5, 16.0/9.0);
+            objectDetector.getTfod().setZoom(2.5, 16.0/9.0);
         }
 
         waitForStart();
@@ -125,10 +125,10 @@ public class MainOpMode extends LinearOpMode {
             telemetry.addData("Pan Position", pan.getPanPosition());
             telemetry.addData("Status", "Running");
 
-            if (objectDetector.tfod != null) {
+            if (objectDetector.getTfod() != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
-                List<Recognition> updatedRecognitions = objectDetector.tfod.getUpdatedRecognitions();
+                List<Recognition> updatedRecognitions = objectDetector.getTfod().getUpdatedRecognitions();
                 if (updatedRecognitions != null) {
                     telemetry.addData("# Object Detected", updatedRecognitions.size());
 
@@ -164,8 +164,8 @@ public class MainOpMode extends LinearOpMode {
                 }
             }
 
-            if (objectDetector.tfod == null) {
-                objectDetector.tfod.shutdown();
+            if (objectDetector.getTfod() == null) {
+                objectDetector.getTfod().shutdown();
             }
         }
     }

@@ -14,13 +14,25 @@ public class ObjectDetector {
 
     private static final String TFOD_MODEL_ASSET = "/converted_tflite/model_unquant.tflite";
     private static final String[] LABELS = {
-        "Cardboard",
-        "Glass",
-        "Metal",
-        "Paper",
-        "Plastic",
-        "Trash"
+        "0 Cardboard",
+        "1 Glass",
+        "2 Metal",
+        "3 Paper",
+        "4 Plastic",
+        "5 Trash"
     };
+
+    /**
+     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+     * localization engine.
+     */
+    private VuforiaLocalizer vuforia;
+
+    /**
+     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
+     * Detection engine.
+     */
+    private TFObjectDetector tfod;
 
     /**
      * Initialize the Vuforia localization engine.
@@ -52,5 +64,19 @@ public class ObjectDetector {
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+    }
+
+    /**
+     * Get the Vuforia Localizer
+     */
+    public VuforiaLocalizer getVuforia() {
+        return vuforia;
+    }
+
+    /**
+     * Get the TensorFlow Object Detector
+     */
+    public TFObjectDetector getTfod() {
+        return tfod;
     }
 }
