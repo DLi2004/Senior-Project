@@ -16,6 +16,7 @@ public class MainOpMode extends LinearOpMode {
     private DriveTrain driveTrain;
     private Pan pan;
     private Broom broom;
+    private Bin bin;
     private ObjectDetector objectDetector;
 
     @Override
@@ -24,6 +25,7 @@ public class MainOpMode extends LinearOpMode {
         pan = new Pan(hardwareMap);
         broom = new Broom(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap);
+        bin = new Bin(hardwareMap);
 
         // Initialize object detector
         objectDetector = new ObjectDetector(hardwareMap);
@@ -55,21 +57,16 @@ public class MainOpMode extends LinearOpMode {
         telemetry.addData("opmode", "ACTIVATED");
         telemetry.update();
         
-        // Pan positions
-        double initPosition = -25;
-        double ground = initPosition;
-        double dumpPosition = initPosition - 537.7 / 4;
-        
         pan.panMove(ground);
         
-        // Pan position checkers
-        boolean isGround = true;
+        // Used to prevent multiple presses
         boolean yPressedLastTime = false;
-        
-        // Broom position checkers
-        boolean open = true;
         boolean xPressedLastTime = false;
+        boolean aPressedLastTime = false;
         
+        // Padding for the pan
+        double panPadding = 25;
+
         while (opModeIsActive()) {
             /* 
              * Drive controls. Mapping:
@@ -84,44 +81,56 @@ public class MainOpMode extends LinearOpMode {
 
             driveTrain.drivePower(twist, forward, strafe);
             
-            // Move pan if y button is pressed
+            /*
+             * Pan controls. Mapping:
+             * - Y button: Toggle between ground and dump positions
+             */
+
             if (gamepad1.y) {
                 telemetry.addData("y button", "pressed");
                 if (!yPressedLastTime) {
-                    if (isGround) {
-                        pan.panMove(dumpPosition);
-                        isGround = false;
-                    } else {
-                        pan.panMove(ground);
-                        isGround = true;
-                    }
+                    pan.toggle();
                     yPressedLastTime = true;
                 }
             } else {
                 yPressedLastTime = false;
-                if (pan.getPanPosition() < dumpPosition + 25 && pan.getPanPosition() > dumpPosition - 25) {
-                    pan.panStop();
-                } else if (pan.getPanPosition() < ground + 25 && pan.getPanPosition() > ground - 25) {
-                    pan.panStop();
+                if (pan.getPosition() < pan.DUMP_POSITION + panPadding && pan.getPosition() > pan.DUMP_POSITION - panPadding) {
+                    pan.stop();
+                } else if (pan.getPosition() < pan.GROUND + panPadding && pan.getPosition() > pan.GROUND - panPadding) {
+                    pan.stop();
                 }
             }
+
+            /*
+             * Broom controls. Mapping:
+             * - X button: Toggle between open and closed
+             */
             
-            // Move broom if x button is pressed
             if (gamepad1.x) {
                 telemetry.addData("x button", "pressed");
                 if (!xPressedLastTime) {
-                    if (open) {
-                        broom.close();
-                        open = false;
-                    } else {
-                        broom.open();
-                        open = true;
-                    }
+                    broom.toggle();
                 }
                 xPressedLastTime = true;
             } else {
                 xPressedLastTime = false;
             }
+
+            /*
+             * Bin controls. Mapping:
+             * - A button: Toggle between trash and recycle
+             */
+
+            if (gamepad1.a) {
+                telemetry.addData("a button", "pressed");
+                if (!aPressedLastTime) {
+                    bin.toggle();
+                }
+                aPressedLastTime = true;
+            } else {
+                aPressedLastTime = false;
+            }
+
 
             telemetry.addData("Pan Position", pan.getPanPosition());
             telemetry.addData("Status", "Running");
