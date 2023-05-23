@@ -14,7 +14,7 @@ public class Broom {
     }
 
     public void close() {
-        this.broomServo.setPosition(0.5);
+        this.broomServo.setPosition(0.3);
     }
 
     public void open() {
