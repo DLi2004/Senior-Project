@@ -16,16 +16,10 @@ public class Pan {
         // telemetry.update();
     }
 
-    public void panLower(double pos) {
+    public void panMove(double pos) {
         this.panMotor.setTargetPosition((int) Math.round(pos));
         this.panMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.panMotor.setPower(0.10);
-    }
-
-    public void panRaise(double pos) {
-        this.panMotor.setTargetPosition((int) Math.round(pos));
-        this.panMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.panMotor.setPower(0.15);
+        this.panMotor.setPower(0.05);
     }
 
     public void panStop() {

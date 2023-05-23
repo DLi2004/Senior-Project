@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.vuforia.Vuforia;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 public class ObjectDetector {
     // https://ftc-docs.firstinspires.org/en/latest/programming_resources/vision/java_tfod_opmode/java-tfod-opmode.html
@@ -12,7 +17,7 @@ public class ObjectDetector {
     private static final String VUFORIA_KEY =
         "AZhl9hf/////AAABmSdXtmMfH0UmgYqMCrsPKV0bbUVNyZM7oFtt7pSdNs6GidCqD6WJfXBgnaH1BW4YlZpX/+l7Pq6wld089Y1uB7vAfAgtj3uqyEKVZsAgApi6c0B53wCWvLKzPxczJAhIyPmJL5RzQCbyoN9pD8TtGXegj7c76YGvx4vjdnItPhfm87d2kkfqHBckPdKtqLtqzomR8qSaMemAfCAUBmrub1G/zx7+yvRCnbU8MPblYofjm/4pUINhJoKNfkHeZzMb3GNKubUkKnA9+d+O+M8rZdYxRcHhv0/453N9BpcegGJwTA1TRMvhDFB7ksSiyU+HSLGtHZW1DXTjoq9QkbLVLcVgQRiqsN49euJ29g85dxur";
 
-    private static final String TFOD_MODEL_ASSET = "/converted_tflite/model_unquant.tflite";
+    private static final String TFOD_MODEL_FILE = "model_unquant.tflite";
     private static final String[] LABELS = {
         "0 Cardboard",
         "1 Glass",
@@ -21,6 +26,12 @@ public class ObjectDetector {
         "4 Plastic",
         "5 Trash"
     };
+    
+    private HardwareMap hardwareMap;
+    
+    public ObjectDetector(HardwareMap hwm) {
+        hardwareMap = hwm;
+    }
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -37,7 +48,7 @@ public class ObjectDetector {
     /**
      * Initialize the Vuforia localization engine.
      */
-    private void initVuforia() {
+    public void initVuforia() {
         /*
         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
         */
@@ -55,7 +66,7 @@ public class ObjectDetector {
     /**
      * Initialize the TensorFlow Object Detection engine.
      */
-    private void initTfod() {
+    public void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
             "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
@@ -63,7 +74,7 @@ public class ObjectDetector {
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 320;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 
     /**
