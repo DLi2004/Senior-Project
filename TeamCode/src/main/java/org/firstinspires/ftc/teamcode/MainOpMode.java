@@ -59,7 +59,7 @@ public class MainOpMode extends LinearOpMode {
         
         pan.panMove(ground);
         
-        // Used to prevent multiple presses
+        // Used to prevent multiple presses in debouncers
         boolean yPressedLastTime = false;
         boolean xPressedLastTime = false;
         boolean aPressedLastTime = false;
@@ -80,6 +80,10 @@ public class MainOpMode extends LinearOpMode {
             double strafe = gamepad1.right_stick_x;
 
             driveTrain.drivePower(twist, forward, strafe);
+            
+            /*
+             * Debouncers for the pan, broom, and bin
+             */
             
             /*
              * Pan controls. Mapping:

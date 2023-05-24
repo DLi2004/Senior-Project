@@ -38,4 +38,8 @@ public class Broom {
             this.close();
         }
     }
+
+    public boolean isOpen() {
+        return this.isOpen;
+    }
 }

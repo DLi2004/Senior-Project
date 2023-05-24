@@ -57,4 +57,8 @@ public class Pan {
         return this.panMotor.getCurrentPosition();
     }
 
+    public boolean isBusy() {
+        return this.panMotor.isBusy();
+    }
+
 }
