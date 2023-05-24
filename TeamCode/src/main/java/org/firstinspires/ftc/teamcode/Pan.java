@@ -9,11 +9,8 @@ public class Pan {
 
     public Pan(HardwareMap hwm) {
         this.hardwareMap = hwm;
-        this.panMotor = hardwareMap.get(DcMotorEx.class, "broom");
+        this.panMotor = hardwareMap.get(DcMotorEx.class, "pan");
         this.panMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // telemetry.addData("Status", "Broom Motor Initialized");
-        // telemetry.update();
     }
 
     public void panMove(double pos) {
@@ -29,5 +26,4 @@ public class Pan {
     public double getPanPosition() {
         return this.panMotor.getCurrentPosition();
     }
-
 }

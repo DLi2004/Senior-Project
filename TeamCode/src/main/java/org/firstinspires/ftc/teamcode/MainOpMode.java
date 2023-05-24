@@ -16,7 +16,10 @@ public class MainOpMode extends LinearOpMode {
     private DriveTrain driveTrain;
     private Pan pan;
     private Broom broom;
+    private Bin bin;
     private ObjectDetector objectDetector;
+
+    private final int PAN_Y = 100;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -24,6 +27,7 @@ public class MainOpMode extends LinearOpMode {
         pan = new Pan(hardwareMap);
         broom = new Broom(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap);
+        bin = new Bin(hardwareMap);
 
         // Initialize object detector
         objectDetector = new ObjectDetector(hardwareMap);
@@ -56,7 +60,7 @@ public class MainOpMode extends LinearOpMode {
         telemetry.update();
         
         // Pan positions
-        double initPosition = -25;
+        double initPosition = pan.getPanPosition();
         double ground = initPosition;
         double dumpPosition = initPosition - 537.7 / 4;
         
@@ -69,6 +73,10 @@ public class MainOpMode extends LinearOpMode {
         // Broom position checkers
         boolean open = true;
         boolean xPressedLastTime = false;
+        
+        // Bin position checkers
+        boolean atTrash = true;
+        boolean aPressedLastTime = false;
         
         while (opModeIsActive()) {
             /* 
@@ -99,11 +107,11 @@ public class MainOpMode extends LinearOpMode {
                 }
             } else {
                 yPressedLastTime = false;
-                if (pan.getPanPosition() < dumpPosition + 25 && pan.getPanPosition() > dumpPosition - 25) {
-                    pan.panStop();
-                } else if (pan.getPanPosition() < ground + 25 && pan.getPanPosition() > ground - 25) {
-                    pan.panStop();
-                }
+                // if (pan.getPanPosition() < dumpPosition + 25 && pan.getPanPosition() > dumpPosition - 25) {
+                //     pan.panStop();
+                // } else if (pan.getPanPosition() < ground + 25 && pan.getPanPosition() > ground - 25) {
+                //     pan.panStop();
+                // }
             }
             
             // Move broom if x button is pressed
@@ -122,9 +130,29 @@ public class MainOpMode extends LinearOpMode {
             } else {
                 xPressedLastTime = false;
             }
+            
+            // Move bin if a button is pressed
+            if (gamepad1.a) {
+                telemetry.addData("a button", "pressed");
+                if (!aPressedLastTime) {
+                    if (open) {
+                        bin.trash();
+                        atTrash = true;
+                    } else {
+                        bin.recycle();
+                        atTrash = false;
+                    }
+                }
+                aPressedLastTime = true;
+            } else {
+                aPressedLastTime = false;
+            }
 
             telemetry.addData("Pan Position", pan.getPanPosition());
+            telemetry.addData("Broom position", broom.getPosition());
+            telemetry.addData("Bin position", bin.getPosition());
             telemetry.addData("Status", "Running");
+            telemetry.update();
 
             // if (objectDetector.getTfod() != null) {
             //     // getUpdatedRecognitions() will return null if no new information is available since
@@ -159,6 +187,25 @@ public class MainOpMode extends LinearOpMode {
             //                 telemetry.addData("Object Detected", recognition.getLabel());
             //             } else {
             //                 isRecyclableDetected = true;
+            //             }
+
+            //             // if trash is detected and the bottom of the bounding box is at
+            //             // the pan's y position, move the pan up
+            //             if (isTrashDetected || isRecyclableDetected) {
+            //                 double center = (recognition.getLeft() + recognition.getRight()) / 2;
+            //                 if (recognition.getBottom() < PAN_Y + 50 && center < PAN_X + 20 && center > PAN_X - 20) {
+            //                     if (isTrashDetected) {
+            //                         bin.trash();
+            //                     } else {
+            //                         bin.recycle();
+            //                     }
+            //                     sleep(500); // Pause before dumping object
+            //                     pan.panMove(dumpPosition);
+            //                     sleep(1000);
+            //                     pan.panMove(ground);
+            //                 } else {
+            //                     // TODO: move to trash
+            //                 }
             //             }
             //         }
             //         telemetry.update();

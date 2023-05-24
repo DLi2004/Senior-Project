@@ -14,10 +14,14 @@ public class Broom {
     }
 
     public void close() {
-        this.broomServo.setPosition(0.3);
+        this.broomServo.setPosition(0.4);
     }
 
     public void open() {
-        this.broomServo.setPosition(0);
+        this.broomServo.setPosition(0.1);
+    }
+    
+    public double getPosition() {
+        return this.broomServo.getPosition();
     }
 }
