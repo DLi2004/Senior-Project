@@ -8,8 +8,8 @@ public class Bin {
     private Servo binServo;
     HardwareMap hardwareMap;
 
-    public final double TRASH = 0;
-    public final double RECYCLE = 0.5;
+    public final double TRASH = 0.12;
+    public final double RECYCLE = 0.78;
 
     private boolean isTrash;
 
@@ -37,5 +37,9 @@ public class Bin {
         } else {
             this.trash();
         }
+    }
+    
+    public double getPosition() {
+        return this.binServo.getPosition();
     }
 }

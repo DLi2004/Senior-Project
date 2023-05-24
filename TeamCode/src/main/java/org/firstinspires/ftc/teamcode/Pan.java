@@ -16,7 +16,7 @@ public class Pan {
     public void panMove(double pos) {
         this.panMotor.setTargetPosition((int) Math.round(pos));
         this.panMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.panMotor.setPower(0.05);
+        this.panMotor.setPower(0.1);
     }
 
     public void panStop() {
