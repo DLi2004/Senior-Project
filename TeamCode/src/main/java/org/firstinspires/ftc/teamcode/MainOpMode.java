@@ -62,7 +62,9 @@ public class MainOpMode extends LinearOpMode {
         // Pan positions
         double initPosition = pan.getPanPosition();
         double ground = initPosition;
-        double dumpPosition = initPosition - 537.7 / 4;
+        double ninetyDegrees = 134.425;
+        double factor = 85/90;
+        double dumpPosition = initPosition - 126.96;
         
         pan.panMove(ground);
         
@@ -71,7 +73,7 @@ public class MainOpMode extends LinearOpMode {
         boolean yPressedLastTime = false;
         
         // Broom position checkers
-        boolean open = true;
+        boolean open = false;
         boolean xPressedLastTime = false;
         
         // Bin position checkers
@@ -87,10 +89,10 @@ public class MainOpMode extends LinearOpMode {
              */
 
             double twist = gamepad1.right_trigger - gamepad1.left_trigger;
-            double forward = gamepad1.left_stick_y;
+            double forward = -gamepad1.left_stick_y;
             double strafe = gamepad1.right_stick_x;
 
-            driveTrain.drivePower(twist, forward, strafe);
+            driveTrain.drivePower(forward, twist, strafe);
             
             // Move pan if y button is pressed
             if (gamepad1.y) {
@@ -135,7 +137,7 @@ public class MainOpMode extends LinearOpMode {
             if (gamepad1.a) {
                 telemetry.addData("a button", "pressed");
                 if (!aPressedLastTime) {
-                    if (open) {
+                    if (!atTrash) {
                         bin.trash();
                         atTrash = true;
                     } else {
