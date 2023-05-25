@@ -35,23 +35,23 @@ public class MainOpMode extends LinearOpMode {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         objectDetector.initVuforia();
-        // objectDetector.initTfod();
+        objectDetector.initTfod();
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
          **/
-        // if (objectDetector.getTfod() != null) {
-        //     objectDetector.getTfod().activate();
+        if (objectDetector.getTfod() != null) {
+            objectDetector.getTfod().activate();
 
-        //     // The TensorFlow software will scale the input images from the camera to a lower resolution.
-        //     // This can result in lower detection accuracy at longer distances (> 55cm or 22").
-        //     // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
-        //     // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
-        //     // should be set to the value of the images used to create the TensorFlow Object Detection model
-        //     // (typically 16/9).
-        //     objectDetector.getTfod().setZoom(2.5, 16.0/9.0);
-        // }
+            // The TensorFlow software will scale the input images from the camera to a lower resolution.
+            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
+            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
+            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
+            // should be set to the value of the images used to create the TensorFlow Object Detection model
+            // (typically 16/9).
+            objectDetector.getTfod().setZoom(2.5, 16.0/9.0);
+        }
 
         waitForStart();
         if (isStopRequested()) return;
@@ -156,67 +156,66 @@ public class MainOpMode extends LinearOpMode {
             telemetry.addData("Status", "Running");
             telemetry.update();
 
-            // if (objectDetector.getTfod() != null) {
-            //     // getUpdatedRecognitions() will return null if no new information is available since
-            //     // the last time that call was made.
-            //     List<Recognition> updatedRecognitions = objectDetector.getTfod().getUpdatedRecognitions();
-            //     if (updatedRecognitions != null) {
-            //         telemetry.addData("# Object Detected", updatedRecognitions.size());
+            if (objectDetector.getTfod() != null) {
+                // getUpdatedRecognitions() will return null if no new information is available since
+                // the last time that call was made.
+                List<Recognition> updatedRecognitions = objectDetector.getTfod().getUpdatedRecognitions();
+                if (updatedRecognitions != null) {
+                    telemetry.addData("# Object Detected", updatedRecognitions.size());
 
-            //         // step through the list of recognitions and display boundary info.
-            //         int i = 0;
-            //         boolean isTrashDetected = false;
-            //         boolean isRecyclableDetected = false;
-            //         for (Recognition recognition : updatedRecognitions) {
-            //             telemetry.addData(String.format("Label (%d)", i), recognition.getLabel());
-            //             telemetry.addData(String.format("Left, Top (%d)", i), "%.03f , %.03f",
-            //                                 recognition.getLeft(), recognition.getTop());
-            //             telemetry.addData(String.format("Right, Bottom (%d)", i), "%.03f , %.03f",
-            //                     recognition.getRight(), recognition.getBottom());
-            //             i++;
+                    // step through the list of recognitions and display boundary info.
+                    int i = 0;
+                    boolean isTrashDetected = false;
+                    boolean isRecyclableDetected = false;
+                    for (Recognition recognition : updatedRecognitions) {
+                        String label = recognition.getLabel();
+                        telemetry.addData(String.format("Label (%d)", i), label);
+                        telemetry.addData(String.format("Left, Top (%d)", i), "%.03f , %.03f",
+                                            recognition.getLeft(), recognition.getTop());
+                        telemetry.addData(String.format("Right, Bottom (%d)", i), "%.03f , %.03f",
+                                recognition.getRight(), recognition.getBottom());
+                        i++;
 
-            //             // check label to see if the camera now sees trash
-            //             if (recognition.getLabel().equals("Trash")) {
-            //                 isTrashDetected = true;
-            //                 telemetry.addData("Object Detected", "Trash");
-            //             } else {
-            //                 isTrashDetected = false;
-            //             }
+                        // check label to see if the camera now sees trash
+                        if (recognition.getLabel().equals("Trash")) {
+                            isTrashDetected = true;
+                        } else {
+                            isTrashDetected = false;
+                        }
                         
-            //             // check label to see if the camera now sees a recyclable object
-            //             if (recognition.getLabel().equals("Cardboard") || recognition.getLabel().equals("Glass") || recognition.getLabel().equals("Metal") || recognition.getLabel().equals("Paper") || recognition.getLabel().equals("Plastic")) {                                               //  ** ADDED **
-            //                 isRecyclableDetected = false;
-            //                 telemetry.addData("Object Detected", recognition.getLabel());
-            //             } else {
-            //                 isRecyclableDetected = true;
-            //             }
+                        // check label to see if the camera now sees a recyclable object
+                        if (label.equals("Cardboard") || label.equals("Glass") || label.equals("Metal") || label.equals("Paper") || label.equals("Plastic")) {
+                            isRecyclableDetected = true;
+                        } else {
+                            isRecyclableDetected = false;
+                        }
 
-            //             // if trash is detected and the bottom of the bounding box is at
-            //             // the pan's y position, move the pan up
-            //             if (isTrashDetected || isRecyclableDetected) {
-            //                 double center = (recognition.getLeft() + recognition.getRight()) / 2;
-            //                 if (recognition.getBottom() < PAN_Y + 50 && center < PAN_X + 20 && center > PAN_X - 20) {
-            //                     if (isTrashDetected) {
-            //                         bin.trash();
-            //                     } else {
-            //                         bin.recycle();
-            //                     }
-            //                     sleep(500); // Pause before dumping object
-            //                     pan.panMove(dumpPosition);
-            //                     sleep(1000);
-            //                     pan.panMove(ground);
-            //                 } else {
-            //                     // TODO: move to trash
-            //                 }
-            //             }
-            //         }
-            //         telemetry.update();
-            //     }
-            // }
+                        // if trash is detected and the bottom of the bounding box is at
+                        // the pan's y position, move the pan up
+                        if (isTrashDetected || isRecyclableDetected) {
+                            double center = (recognition.getLeft() + recognition.getRight()) / 2;
+                            if (recognition.getBottom() < PAN_Y + 50 && center < PAN_X + 20 && center > PAN_X - 20) {
+                                if (isTrashDetected) {
+                                    bin.trash();
+                                } else {
+                                    bin.recycle();
+                                }
+                                sleep(500); // Pause before dumping object
+                                pan.panMove(dumpPosition);
+                                sleep(1000);
+                                pan.panMove(ground);
+                            } else {
+                                // TODO: move to trash
+                            }
+                        }
+                    }
+                    telemetry.update();
+                }
+            }
 
-            // if (objectDetector.getTfod() == null) {
-            //     objectDetector.getTfod().shutdown();
-            // }
+            if (objectDetector.getTfod() == null) {
+                objectDetector.getTfod().shutdown();
+            }
         }
     }
 }
